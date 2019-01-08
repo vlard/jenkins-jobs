@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# echo -n "what is the admin password: " && read password
-password=vlad
+echo -n "what is the admin password: " && read password
 export password
 
 CRUMB=$(curl -s "http://localhost:8080/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,\":\",//crumb)" --user "admin:$password")
@@ -9,18 +8,18 @@ CRUMB=$(curl -s "http://localhost:8080/crumbIssuer/api/xml?xpath=concat(//crumbR
 # declare an array of jobs
 declare -a array=($(ls *.xml))
 
-# echo "which job would you like to load?: "
-# ls -1 *.xml
-# echo -n "type here: " && read job
+echo "which job would you like to load?: "
+ls -1 *.xml
+echo -n "type here: " && read job
 
-# if [[ $job == "all" ]];
-# then
-for i in "${array[@]}"
-do
-  curl -s -XPOST "http://localhost:8080/createItem?name=$i" -u admin:$password --data-binary "@$i" -H "Content-Type:text/xml" -H "$CRUMB"
-done
-#   echo "all jobs have been added"
-#   exit 0
-# else
-#   curl -s -XPOST "http://localhost:8080/createItem?name=$job" -u admin:$password --data-binary "@$job" -H "Content-Type:text/xml" -H "$CRUMB"
-# fi
+if [[ $job == "all" ]];
+then
+  for i in "${array[@]}"
+  do
+    curl -s -XPOST "http://localhost:8080/createItem?name=$i" -u admin:$password --data-binary "@$i" -H "Content-Type:text/xml" -H "$CRUMB"
+  done
+  echo "all jobs have been added"
+  exit 0
+else
+  curl -s -XPOST "http://localhost:8080/createItem?name=$job" -u admin:$password --data-binary "@$job" -H "Content-Type:text/xml" -H "$CRUMB"
+fi
