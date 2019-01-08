@@ -5,6 +5,22 @@ export password
 
 CRUMB=$(curl -s "http://localhost:8080/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,\":\",//crumb)" --user "admin:$password")
 
-curl -s -XPOST 'http://localhost:8080/createItem?name=job1' -u admin:$password --data-binary @job1.xml -H "Content-Type:text/xml"
+# declare an array of jobs
+declare -a array=($(ls *.xml))
 
-curl -s -XPOST 'http://localhost:8080/createItem?name=job2' -u admin:$password --data-binary @job2.xml -H "Content-Type:text/xml"
+echo "which job would you like to load?: "
+ls -1 *.xml
+echo -n "type here: " && read job
+
+if [[ $job == "all" ]];
+then
+  for i in "${array[@]}"
+  do
+    curl -s -XPOST "http://localhost:8080/createItem?name=$i" -u admin:$password --data-binary "@$i" -H "Content-Type:text/xml" -H "$CRUMB"
+    # or do whatever with individual element of the array
+  done
+  echo "all jobs have been added"
+  exit 0
+else
+  curl -s -XPOST "http://localhost:8080/createItem?name=$job" -u admin:$password --data-binary "@$job" -H "Content-Type:text/xml" -H "$CRUMB"
+fi
