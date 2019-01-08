@@ -17,7 +17,6 @@ then
   for i in "${array[@]}"
   do
     curl -s -XPOST "http://localhost:8080/createItem?name=$i" -u admin:$password --data-binary "@$i" -H "Content-Type:text/xml" -H "$CRUMB"
-    # or do whatever with individual element of the array
   done
   echo "all jobs have been added"
   exit 0
