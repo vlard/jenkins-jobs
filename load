@@ -2,7 +2,7 @@
 
 # echo -n "what is the admin password: " && read password
 # export password
-
+password=$(sudo grep 'password' /home/ec2-user/.bash_profile | cut -d "=" -f2 | xargs)
 CRUMB=$(curl -s "http://localhost:8080/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,\":\",//crumb)" --user "admin:$password")
 
 echo $CRUMB
